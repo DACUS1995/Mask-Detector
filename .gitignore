@@ -137,3 +137,5 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 /SampleGenerator/trained_models/*.dat
+/SampleGenerator/original_images/*.jpg
+/SampleGenerator/generated_image/*.jpg
