@@ -19,7 +19,7 @@ def detect_faces(image: np.ndarray, display_image:bool = True):
 	# second argument indicates that we should upsample the image 1 time. This
 	# will make everything bigger and allow us to detect more faces.
 	detected_faces = detector(image, 1)
-	print("Number of faces detected: {}".format(len(detected_faces)))
+	# print("Number of faces detected: {}".format(len(detected_faces)))
 
 	detected_faces_boxes = []
 	detected_faces_landmarks = []

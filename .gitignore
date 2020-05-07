@@ -138,4 +138,4 @@ dmypy.json
 cython_debug/
 /SampleGenerator/trained_models/*.dat
 /SampleGenerator/original_images/*.jpg
-/SampleGenerator/generated_image/*.jpg
+/SampleGenerator/generated_images/*.jpg

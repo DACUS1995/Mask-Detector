@@ -6,6 +6,7 @@ from PIL import Image
 import cv2
 import random
 from tqdm import tqdm
+import json
 
 from detector import detect_faces
 
@@ -14,6 +15,8 @@ def generate_dataset(root_face_images_folder_path, mask_images_folder = "mask_im
 	mask_images_paths = list(pathlib.Path(mask_images_folder).glob('*'))
 	mask_images = [Image.open(path) for path in mask_images_paths]
 
+	targets = {}
+
 	for i, img_path in enumerate(tqdm(original_images_paths)):
 		image_name = str(img_path).split(os.sep)[1]
 		image = Image.open(img_path).convert("RGB")
@@ -21,9 +24,17 @@ def generate_dataset(root_face_images_folder_path, mask_images_folder = "mask_im
 
 		image = apply_face_mask(image, mask_images, detected_faces_landmarks)
 		image.save("generated_images/" + image_name)
+
+		targets[image_name] = {
+			"bbox": detected_faces_boxes,
+		}
+
 		# cv2.imshow("Output", cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR))
 		# cv2.waitKey(0)
-		
+
+	with open("targets.json", "w", encoding="utf8") as outfile:
+		json.dump(targets, outfile)
+
 
 def apply_face_mask(face_image, mask_images, detected_faces_landmarks):
 	for idx, face_landmarks in enumerate(detected_faces_landmarks):
@@ -62,8 +73,8 @@ def apply_face_mask(face_image, mask_images, detected_faces_landmarks):
 		mask_image.paste(mask_right_img, (mask_left_img.width, 0), mask_right_img)
 
 		# rotate mask
-		angle = np.arctan2(chin_bottom_point[1] - nose_point[1], chin_bottom_point[0] - nose_point[0])
-		rotated_mask_image = mask_image.rotate(angle, expand=True)
+		angle = np.arctan2(chin_bottom_point[1] - nose_point[1], chin_bottom_point[0] - nose_point[0]) * 180 / np.pi
+		rotated_mask_image = mask_image.rotate(90 - angle, expand=True)
 
 		# calculate mask location
 		center_x = (nose_point[0] + chin_bottom_point[0]) // 2
@@ -75,7 +86,7 @@ def apply_face_mask(face_image, mask_images, detected_faces_landmarks):
 		box_y = center_y + int(offset * np.sin(radian)) - rotated_mask_image.height // 2
 
 		# add mask
-		face_image.paste(mask_image, (box_x, box_y), mask_image)
+		face_image.paste(rotated_mask_image, (box_x, box_y), rotated_mask_image)
 	
 	return face_image
 
@@ -90,6 +101,7 @@ def get_distance_from_point_to_line(point, line_point1, line_point2):
 
 def main():
 	generate_dataset(root_face_images_folder_path="original_images")
+	# generate_dataset(root_face_images_folder_path="test_images")
 
 if __name__ == "__main__":
 	main()
