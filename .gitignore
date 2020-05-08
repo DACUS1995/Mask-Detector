@@ -144,3 +144,4 @@ cython_debug/
 /dataset
 /cocoapi
 /logs
+model.pt
