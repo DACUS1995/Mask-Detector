@@ -4,26 +4,33 @@ from torchvision.models.detection.rpn import AnchorGenerator
 
 
 def create_model(num_classes = 2):
-	backbone = torchvision.models.mobilenet_v2(pretrained=True).features
-	backbone.out_channels = 1280
-
-	anchor_generator = AnchorGenerator(
-		sizes=((32, 64, 128, 256, 512),),
-		aspect_ratios=((0.5, 1.0, 2.0),)
-	)
+	# backbone = torchvision.models.mobilenet_v2(pretrained=True).features
+	# backbone.out_channels = 1280
 
 
-	roi_pooler = torchvision.ops.MultiScaleRoIAlign(
-		featmap_names=[0],
-		output_size=7,
-		sampling_ratio=2
-	)
+	# anchor_generator = AnchorGenerator(
+	# 	sizes=((32, 64, 128, 256, 512),),
+	# 	aspect_ratios=((0.5, 1.0, 2.0),)
+	# )
 
-	model = FasterRCNN(
-		backbone,
-		num_classes=num_classes,
-		rpn_anchor_generator=anchor_generator,
-		box_roi_pool=roi_pooler
+
+	# roi_pooler = torchvision.ops.MultiScaleRoIAlign(
+	# 	featmap_names=[0],
+	# 	output_size=7,
+	# 	sampling_ratio=2
+	# )
+
+	# model = FasterRCNN(
+	# 	backbone,
+	# 	num_classes=num_classes,
+	# 	rpn_anchor_generator=anchor_generator,
+	# 	box_roi_pool=roi_pooler
+	# )
+
+	model = torchvision.models.detection.fasterrcnn_resnet50_fpn(
+		pretrained=False,
+		pretrained_backbone=True,
+		num_classes=num_classes
 	)
 
 	return model

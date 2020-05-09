@@ -100,21 +100,7 @@ class CustomDataset(Dataset):
 		}
 
 		label = class_to_label[image_class]
-		image = np.array(Image.open(image_path))
-		# for bbox in self.targets[image_name]["bbox"]:
-		# 	bbox[0] = 
-		# 	bbox[1] = 
-		# 	bbox[2] = 
-		# 	bbox[3] = 
-
-		# annotations = {
-		# 	'image': image, 
-		# 	'bboxes': self.targets[image_name]["bbox"], 
-		# 	'category_id': [label]
-		# }
-		# aug = get_aug([Resize(p=1, height=224, width=224)])
-		# augmented = aug(**annotations)
-		# image = augmented['image']
+		image = np.array(Image.open(image_path).convert("RGB"))
 
 
 		target = {}
