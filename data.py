@@ -100,7 +100,7 @@ class CustomDataset(Dataset):
 		}
 
 		label = class_to_label[image_class]
-		image = np.array(Image.open(image_path).convert('RGB'))
+		image = np.array(Image.open(image_path))
 		# for bbox in self.targets[image_name]["bbox"]:
 		# 	bbox[0] = 
 		# 	bbox[1] = 
@@ -116,6 +116,7 @@ class CustomDataset(Dataset):
 		# augmented = aug(**annotations)
 		# image = augmented['image']
 
+
 		target = {}
 		if len(self.targets[image_name]["bbox"]) == 0:
 			self.targets[image_name]["bbox"] = [[]]
@@ -124,7 +125,17 @@ class CustomDataset(Dataset):
 		# target["masks"] = masks
 		# target["image_id"] = image_id
 		# target["area"] = area
-		target["iscrowd"] = torch.tensor([False]).to(device)
+		target["iscrowd"] = torch.tensor([False] * len(self.targets[image_name]["bbox"])).to(device)
+		target["image_id"] = torch.tensor([idx]).to(device)
+
+		area = (
+			target["boxes"][:, 3] - \
+			target["boxes"][:, 1]) * \
+			(target["boxes"][:, 2] - \
+			target["boxes"][:, 0]
+		)
+
+		target["area"] = torch.tensor(area)
 
 		if self.transformers is not None:
 			image = self.transformers[self.run_type + "_transforms"](image)

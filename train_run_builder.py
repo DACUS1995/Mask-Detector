@@ -15,7 +15,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.tensorboard import SummaryWriter
-from pytorch_detection.engine import train_one_epoch
+from pytorch_detection.engine import train_one_epoch, evaluate
 
 from run_builder import RunBuilder
 from data import DataHandler
@@ -83,6 +83,7 @@ def train(cfg) -> None:
 
 			# train for one epoch, printing every 10 iterations
 			train_one_epoch(model, optimizer, train_loader, device, epoch, print_freq=10)
+			evaluate(model, train_loader, device)
 			continue
 			
 
