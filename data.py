@@ -107,11 +107,8 @@ class CustomDataset(Dataset):
 		if len(self.targets[image_name]["bbox"]) == 0:
 			self.targets[image_name]["bbox"] = [[]]
 		target["boxes"] = torch.as_tensor(self.targets[image_name]["bbox"], dtype=torch.float32).to(device)
-		target["labels"] = torch.as_tensor([label] * len(self.targets[image_name]["bbox"]), dtype=torch.float32).to(device)
-		# target["masks"] = masks
-		# target["image_id"] = image_id
-		# target["area"] = area
-		target["iscrowd"] = torch.tensor([False] * len(self.targets[image_name]["bbox"])).to(device)
+		target["labels"] = torch.as_tensor([label] * len(self.targets[image_name]["bbox"]), dtype=torch.int64).to(device)
+		target["iscrowd"] = torch.tensor([False] * len(self.targets[image_name]["bbox"]), dtype=torch.int64).to(device)
 		target["image_id"] = torch.tensor([idx]).to(device)
 
 		area = (
