@@ -4,7 +4,7 @@ from torchvision.models.detection.rpn import AnchorGenerator
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 
 
-def create_model(num_classes = 2):
+def create_model(num_classes = 3):
 	# backbone = torchvision.models.mobilenet_v2(pretrained=True).features
 	# backbone.out_channels = 1280
 

@@ -61,7 +61,7 @@ def train(cfg) -> None:
 		comment = f"Run setup -- {run}"
 		print(comment)
 
-		model = model_rcnn.create_model(num_classes=2)
+		model = model_rcnn.create_model(num_classes=3)
 		model.to(device)
 		params = [p for p in model.parameters() if p.requires_grad]
 		optimizer = optim.Adam(params, lr=0.0001, betas=(0.9, 0.999), eps=1e-08, weight_decay=1e-4)
@@ -82,7 +82,6 @@ def train(cfg) -> None:
 		for epoch in range(run.num_epochs):
 			print('Epoch {}/{}'.format(epoch, run.num_epochs))
 			print('-' * 10)
-			evaluate(model, train_loader, device)
 
 			# train for one epoch, printing every 10 iterations
 			train_one_epoch(model, optimizer, train_loader, device, epoch, print_freq=10)
@@ -92,7 +91,7 @@ def train(cfg) -> None:
 			# cv2.imshow("Output", processed_image)
 			# cv2.waitKey(0)
 
-			evaluate(model, train_loader, device)
+			evaluate(model, validation_loader, device)
 			continue
 			
 

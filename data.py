@@ -97,8 +97,8 @@ class CustomDataset(Dataset):
 		image_class = str(image_path).split(os.sep)[1]
 
 		class_to_label = {
-			"masked_faces": 0,
-			"normal_faces": 1
+			"masked_faces": 1,
+			"normal_faces": 2
 		}
 
 		label = class_to_label[image_class]
