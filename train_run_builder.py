@@ -82,14 +82,15 @@ def train(cfg) -> None:
 		for epoch in range(run.num_epochs):
 			print('Epoch {}/{}'.format(epoch, run.num_epochs))
 			print('-' * 10)
+			evaluate(model, train_loader, device)
 
 			# train for one epoch, printing every 10 iterations
 			train_one_epoch(model, optimizer, train_loader, device, epoch, print_freq=10)
-			model.eval()
-			processed_image = process_image("./SampleGenerator/test_images/2.jpg", model, device)
-			processed_image = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
-			cv2.imshow("Output", processed_image)
-			cv2.waitKey(0)
+			# model.eval()
+			# processed_image = process_image("./SampleGenerator/test_images/2.jpg", model, device)
+			# processed_image = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
+			# cv2.imshow("Output", processed_image)
+			# cv2.waitKey(0)
 
 			evaluate(model, train_loader, device)
 			continue

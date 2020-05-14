@@ -7,6 +7,8 @@ from PIL import Image
 import os
 
 from pytorch_detection.utils import collate_fn
+from pytorch_detection import utils
+from pytorch_detection import transforms as T
 
 import torch
 import torch.nn as nn
@@ -79,12 +81,12 @@ class CustomDataset(Dataset):
 		self.images_paths = image_paths
 
 		self.transformers = {
-			'train_transforms' : transforms.Compose([
+			'train_transforms' : T.Compose([
 				# transforms.RandomHorizontalFlip(0.5),
-				transforms.ToTensor()
+				T.ToTensor()
 			]),
-			'valid_transforms' : transforms.Compose([
-				transforms.ToTensor()
+			'valid_transforms' : T.Compose([
+				T.ToTensor()
 			])
 		}
 
@@ -100,7 +102,7 @@ class CustomDataset(Dataset):
 		}
 
 		label = class_to_label[image_class]
-		image = np.array(Image.open(image_path).convert("RGB"))
+		image = Image.open(image_path).convert("RGB")
 
 
 		target = {}
@@ -108,7 +110,7 @@ class CustomDataset(Dataset):
 			self.targets[image_name]["bbox"] = [[]]
 		target["boxes"] = torch.as_tensor(self.targets[image_name]["bbox"], dtype=torch.float32).to(device)
 		target["labels"] = torch.as_tensor([label] * len(self.targets[image_name]["bbox"]), dtype=torch.int64).to(device)
-		target["iscrowd"] = torch.tensor([False] * len(self.targets[image_name]["bbox"]), dtype=torch.int64).to(device)
+		target["iscrowd"] = torch.tensor([0] * len(self.targets[image_name]["bbox"]), dtype=torch.int64).to(device)
 		target["image_id"] = torch.tensor([idx]).to(device)
 
 		area = (
@@ -121,7 +123,7 @@ class CustomDataset(Dataset):
 		target["area"] = torch.tensor(area)
 
 		if self.transformers is not None:
-			image = self.transformers[self.run_type + "_transforms"](image)
+			image, target = self.transformers[self.run_type + "_transforms"](image, target)
 		return image, target
 
 
