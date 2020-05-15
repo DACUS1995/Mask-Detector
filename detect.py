@@ -84,6 +84,6 @@ def main(args):
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--realtime", type=bool, default=False, help="run in realtime mode")
-	parser.add_argument("--image", type=str, default="./SampleGenerator/test_images/faces.jpg", help="image to detect")
+	parser.add_argument("--image", type=str, default="./SampleGenerator/test_images/27.jpg", help="image to detect")
 	args = parser.parse_args()
 	main(args)

@@ -54,7 +54,7 @@ def apply_face_mask(face_image, mask_images, detected_faces_landmarks):
 		# split mask and resize
 		width = mask_image.width
 		height = mask_image.height
-		width_ratio = 1.8
+		width_ratio = 1.7
 		new_height = int(np.linalg.norm(nose_v - chin_bottom_v))
 
 		# left
@@ -76,8 +76,8 @@ def apply_face_mask(face_image, mask_images, detected_faces_landmarks):
 		mask_image.paste(mask_right_img, (mask_left_img.width, 0), mask_right_img)
 
 		# rotate mask
-		angle = np.arctan2(chin_bottom_point[1] - nose_point[1], chin_bottom_point[0] - nose_point[0]) * 180 / np.pi
-		rotated_mask_image = mask_image.rotate(90 - angle, expand=True)
+		angle = np.arctan2(chin_bottom_point[1] - nose_point[1], chin_bottom_point[0] - nose_point[0])
+		rotated_mask_image = mask_image.rotate(angle, expand=True)
 
 		# calculate mask location
 		center_x = (nose_point[0] + chin_bottom_point[0]) // 2
