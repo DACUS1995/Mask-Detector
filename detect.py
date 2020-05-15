@@ -13,6 +13,9 @@ import time
 from models import model_rcnn
 
 THRESHOLD = 0.5
+device = torch.device("cuda")
+print(f"Using device {device}")
+
 
 
 def process_image(image, model, device = None):
@@ -23,6 +26,7 @@ def process_image(image, model, device = None):
 
 	if device is not None:
 		image = image.to(device)
+		print("Here")
 
 	with torch.no_grad():
 		output = model([image])[0]
@@ -54,11 +58,12 @@ def process_image(image, model, device = None):
 def main(args):
 	model = model_rcnn.create_model(3)
 	model.load_state_dict(torch.load("model.pt"))
+	model.to(device)
 	model.eval()
 
 	if args.realtime == False:
 		image = Image.open(args.image).resize((224,224)).convert("RGB")
-		processed_image = process_image(image, model)
+		processed_image = process_image(image, model, device)
 		processed_image = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
 		cv2.imshow("Output", processed_image)
 		cv2.waitKey(0)
@@ -69,7 +74,7 @@ def main(args):
 		while True:
 			frame = vs.read()
 			frame = imutils.resize(frame, width=400)
-			processed_image = process_image(frame, model)
+			processed_image = process_image(frame, model, device)
 			cv2.imshow("Frame", processed_image)
 			key = cv2.waitKey(1) & 0xFF
 
