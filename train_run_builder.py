@@ -85,116 +85,14 @@ def train(cfg) -> None:
 
 			# train for one epoch, printing every 10 iterations
 			train_one_epoch(model, optimizer, train_loader, device, epoch, print_freq=10)
-			# model.eval()
-			# processed_image = process_image("./SampleGenerator/test_images/2.jpg", model, device)
-			# processed_image = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
-			# cv2.imshow("Output", processed_image)
-			# cv2.waitKey(0)
-
 			evaluate(model, validation_loader, device)
-			continue
-			
-
-			########### Training step ###########
-			model.train()
-			training_loss = []
-			running_loss = 0.0
-			running_corrects = 0
-			
-			for i, data in enumerate(tqdm(train_loader, desc=f"Epoch [{epoch + 1}] progress")):
-
-				x_batch, label_batch = data
-				x_batch, = x_batch.to(device)
-
-				optimizer.zero_grad()
-				outputs = model(x_batch)
-				_, preds = torch.max(outputs, 1)
-
-				loss = loss_criterion(outputs, label_batch)
-
-				loss.backward()
-				optimizer.step()
-				
-				# statistics
-				running_loss += loss.item() * x_batch.size(0)
-				running_corrects += torch.sum(preds == label_batch.detach())
-				training_loss.append(loss.item())
-
-				# # tensorboard logging
-				# if i % 1000 == 0:
-				# 	writer.add_scalar("Loss/train", running_loss / 1000, epoch * len(trainloader) + i)
-				# 	writer.add_scalar("Accuracy/train", running_loss / 1000, epoch * len(trainloader) + i)
-
-
-			epoch_loss = running_loss / training_dataset_size
-			epoch_acc = running_corrects.double() / training_dataset_size
-
-			# tensorboard logging
-			writer.add_scalar("Loss/train", epoch_loss, epoch)
-			writer.add_scalar("Accuracy/train", epoch_acc, epoch)
-
-			print('Training step => Loss: {:.4f} Acc: {:.4f}'.format(
-				epoch_loss, epoch_acc
-			))
-
-
-			########### Validation step ###########
-			model.eval()
-			validation_loss = []
-			running_loss = 0.0
-			running_corrects = 0
-
-			for i, data in enumerate(validation_loader):
-				with torch.no_grad():
-					x_batch, label_batch = data
-					x_batch, label_batch = x_batch.to(device), label_batch.to(device)
-
-					outputs = model(...)
-					_, preds = torch.max(outputs, 1)
-					loss = loss_criterion(...)
-
-					running_loss += loss.item() * x_batch.size(0)
-					running_corrects += torch.sum(preds == label_batch.detach())
-					validation_loss.append(loss.item())
-			
-			epoch_loss = running_loss / validation_dataset_size
-			epoch_acc = running_corrects.double() / validation_dataset_size
-
-			# tensorboard logging
-			writer.add_scalar("Loss/validation", epoch_loss, epoch)
-			writer.add_scalar("Accuracy/validation", epoch_acc, epoch)
-
-			print('Evaluation step => Loss: {:.4f} Acc: {:.4f}'.format(
-				epoch_loss, epoch_acc
-			))
-
-			#Save the best model based on accuracy
-			if epoch_acc > best_acc:
-				best_acc = epoch_acc
-				best_config = f"{run}"
-				best_model_wts = copy.deepcopy(model.state_dict())
-
-			#Checkpoint
-			torch.save({
-				"epoch": epoch,
-				"model_state_dict": model.state_dict(),
-				"optimizer_state_dict": optimizer.state_dict()
-			}, "./checkpoints/ckp.pt")
-
 
 		time_elapsed = time.time() - since
 		print('Training complete in {:.0f}m {:.0f}s'.format(
 			time_elapsed // 60, time_elapsed % 60
 		))
-		print('Best (so far) validation Acc: {:4f}'.format(best_acc))
 
-
-	print('-' * 10)
-	print('### Final results ###\n')
-	print('Best validation Acc: {:4f}'.format(best_acc))
 	print(f"Best configuration: {best_config}")
-
-	# model.load_state_dict(best_model_wts)
 	return model
 
 
