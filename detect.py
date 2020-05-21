@@ -9,11 +9,13 @@ import argparse
 import imutils
 from imutils.video import VideoStream
 import time
+from torch.quantization import QuantStub
 
 from models import model_rcnn
+from post_training_quantization import apply_quantization
 
 THRESHOLD = 0.5
-device = torch.device("cuda")
+device = torch.device("cpu")
 print(f"Using device {device}")
 
 
@@ -23,6 +25,9 @@ def process_image(image, model, device = None):
 
 	trs = transforms.Compose([transforms.ToTensor()])
 	image = trs(image_np)
+	image = torch.quantize_per_tensor(image, 0.1, 10, torch.quint8)
+	# quant = QuantStub()
+	# image = quant(image)
 
 	if device is not None:
 		image = image.to(device)
@@ -57,9 +62,10 @@ def process_image(image, model, device = None):
 
 def main(args):
 	model = model_rcnn.create_model(3)
-	model.load_state_dict(torch.load("model.pt"))
 	model.to(device)
 	model.eval()
+	model = apply_quantization(model)
+	model.load_state_dict(torch.load("quantized_model.pt"))
 
 	if args.realtime == False:
 		image = Image.open(args.image).resize((800,800)).convert("RGB")
