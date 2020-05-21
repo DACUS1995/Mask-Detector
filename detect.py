@@ -62,7 +62,7 @@ def main(args):
 	model.eval()
 
 	if args.realtime == False:
-		image = Image.open(args.image).resize((224,224)).convert("RGB")
+		image = Image.open(args.image).resize((800,800)).convert("RGB")
 		processed_image = process_image(image, model, device)
 		processed_image = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
 		cv2.imshow("Output", processed_image)

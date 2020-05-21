@@ -19,7 +19,7 @@ def generate_dataset(root_face_images_folder_path, mask_images_folder = "mask_im
 
 	for i, img_path in enumerate(tqdm(original_images_paths)):
 		image_name = str(img_path).split(os.sep)[1]
-		image = Image.open(img_path).convert("RGB").resize((224,224))
+		image = Image.open(img_path).convert("RGB").resize((800,800))
 		detected_faces_boxes, detected_faces_landmarks = detect_faces(np.array(image), False)
 		if len(detected_faces_boxes) == 0:
 			continue
