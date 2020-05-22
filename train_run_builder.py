@@ -22,7 +22,6 @@ from data import DataHandler
 from config import Config
 import utils
 from models import model_rcnn
-from detect import process_image
 import cv2
 
 torch.manual_seed(0)
@@ -33,6 +32,7 @@ np.random.seed(0)
 
 def train(cfg) -> None:
 	device = torch.device(cfg.device)
+	print(f"Using device {device}")
 
 	runs = None
 	if cfg.use_run_setup == True:

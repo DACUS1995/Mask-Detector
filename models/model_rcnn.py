@@ -16,7 +16,7 @@ def create_model(num_classes = 3):
 
 
 	roi_pooler = torchvision.ops.MultiScaleRoIAlign(
-		featmap_names=[0],
+		featmap_names=["0"],
 		output_size=7,
 		sampling_ratio=2
 	)
